@@ -1,0 +1,227 @@
+/* =========================================================
+   BiblioCRUD — Hoja de estilos
+   Organización: 1) variables  2) base  3) encabezado
+   4) tarjetas y formulario  5) listado y tabla  6) diálogo y notificaciones
+   7) adaptación a celulares
+   ========================================================= */
+
+/* ---------- 1. Variables: cambiar aquí los colores cambia toda la app ---------- */
+:root {
+  --color-fondo: #f6f2ea;
+  --color-superficie: #ffffff;
+  --color-primario: #1f5a43;
+  --color-primario-oscuro: #163f30;
+  --color-acento: #b7791f;
+  --color-texto: #1f2328;
+  --color-texto-suave: #5b616b;
+  --color-borde: #e3ddd1;
+  --color-peligro: #b42318;
+  --color-exito-fondo: #e3f1e9;
+  --color-exito-texto: #185c3c;
+  --color-aviso-fondo: #fbefd9;
+  --color-aviso-texto: #8a5a12;
+  --radio: 12px;
+  --sombra: 0 1px 2px rgba(31, 35, 40, 0.06), 0 6px 20px rgba(31, 35, 40, 0.06);
+  --fuente-titulos: Georgia, "Times New Roman", serif;
+  --fuente-texto: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* ---------- 2. Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  font-family: var(--fuente-texto);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-texto);
+  background: var(--color-fondo);
+}
+
+.contenedor { width: min(1280px, 100% - 2rem); margin-inline: auto; }
+
+.solo-lectores {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ---------- 3. Encabezado ---------- */
+.encabezado {
+  background: var(--color-primario);
+  color: #fff;
+  padding: 1.25rem 0;
+}
+.encabezado__contenido {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+}
+.marca { display: flex; align-items: center; gap: 0.75rem; }
+.marca__icono { font-size: 2.2rem; line-height: 1; }
+.marca__titulo { margin: 0; font-family: var(--fuente-titulos); font-size: 1.9rem; letter-spacing: 0.3px; }
+.marca__subtitulo { margin: 0; opacity: 0.85; font-size: 0.95rem; }
+
+.estadisticas { display: flex; gap: 0.75rem; margin: 0; }
+.estadistica {
+  min-width: 96px; padding: 0.5rem 0.9rem; text-align: center;
+  background: rgba(255, 255, 255, 0.12); border-radius: 10px;
+}
+.estadistica dt { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.6px; opacity: 0.85; }
+.estadistica dd { margin: 0; font-size: 1.5rem; font-weight: 700; }
+
+/* ---------- 4. Tarjetas y formulario ---------- */
+.principal {
+  display: grid; grid-template-columns: 340px 1fr; gap: 1.5rem; align-items: start;
+  padding: 1.75rem 0 2.5rem;
+}
+.tarjeta {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 1.4rem;
+}
+.tarjeta__titulo { margin: 0 0 1rem; font-family: var(--fuente-titulos); font-size: 1.35rem; color: var(--color-primario); }
+
+.formulario { position: sticky; top: 1rem; }
+.formulario--editando { border-color: var(--color-acento); box-shadow: 0 0 0 3px rgba(183, 121, 31, 0.18), var(--sombra); }
+.aviso-edicion {
+  margin: -0.4rem 0 1rem; padding: 0.55rem 0.75rem; border-radius: 8px;
+  background: var(--color-aviso-fondo); color: var(--color-aviso-texto); font-size: 0.9rem;
+}
+
+.campo { margin: 0 0 0.85rem; padding: 0; border: 0; min-width: 0; }
+.fila-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.campo label, .campo legend { display: block; font-weight: 600; font-size: 0.92rem; margin-bottom: 0.3rem; }
+.obligatorio { color: var(--color-peligro); }
+.opcional { font-weight: 400; color: var(--color-texto-suave); }
+
+input[type="text"], input[type="number"], input[type="search"], select {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  font: inherit;
+  color: inherit;
+  background: #fff;
+  border: 1px solid #cfc8b9;
+  border-radius: 8px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input:focus, select:focus, button:focus-visible {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px rgba(31, 90, 67, 0.2);
+}
+input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--color-peligro); }
+.error { min-height: 1.1em; margin: 0.25rem 0 0; color: var(--color-peligro); font-size: 0.83rem; }
+.error:empty { min-height: 0; margin: 0; }
+
+.campo--estado { display: flex; gap: 1.25rem; flex-wrap: wrap; align-items: center; }
+.campo--estado legend { width: 100%; }
+.opcion-radio { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 400 !important; cursor: pointer; }
+.opcion-radio input { accent-color: var(--color-primario); width: 1.05rem; height: 1.05rem; }
+
+.acciones-formulario { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; }
+
+/* Botones */
+.boton {
+  padding: 0.65rem 1.1rem; font: inherit; font-weight: 600;
+  border: 1px solid transparent; border-radius: 8px; cursor: pointer;
+  transition: background 0.15s, transform 0.05s;
+}
+.boton:active { transform: translateY(1px); }
+.boton--primario { background: var(--color-primario); color: #fff; }
+.boton--primario:hover { background: var(--color-primario-oscuro); }
+.boton--secundario { background: #fff; color: var(--color-texto); border-color: #cfc8b9; }
+.boton--secundario:hover { background: #f3efe6; }
+.boton--peligro { background: var(--color-peligro); color: #fff; }
+.boton--peligro:hover { background: #8f1c13; }
+
+/* ---------- 5. Listado y tabla ---------- */
+.listado__cabecera { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.contador { margin: 0; color: var(--color-texto-suave); font-size: 0.9rem; }
+
+.herramientas {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 1rem;
+}
+.herramientas__buscar { grid-column: 1 / -1; }
+
+.tabla-envoltura { overflow-x: auto; }
+.tabla { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.tabla th {
+  text-align: left; padding: 0.6rem 0.7rem; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px;
+  color: var(--color-texto-suave); border-bottom: 2px solid var(--color-borde);
+}
+.tabla td { padding: 0.75rem 0.7rem; border-bottom: 1px solid var(--color-borde); vertical-align: middle; }
+.tabla tbody tr:hover { background: #faf8f3; }
+.tabla__detalle { display: block; font-size: 0.8rem; color: var(--color-texto-suave); white-space: nowrap; }
+.tabla__acciones { white-space: nowrap; text-align: right; }
+
+.etiqueta { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.82rem; font-weight: 600; white-space: nowrap; }
+.etiqueta--disponible { background: var(--color-exito-fondo); color: var(--color-exito-texto); }
+.etiqueta--prestado { background: var(--color-aviso-fondo); color: var(--color-aviso-texto); }
+
+.boton-icono {
+  display: inline-flex; align-items: center; gap: 0.3rem; margin-left: 0.3rem;
+  padding: 0.4rem 0.6rem; font: inherit; font-size: 0.85rem; font-weight: 600;
+  background: #fff; border: 1px solid var(--color-borde); border-radius: 8px; cursor: pointer;
+}
+.boton-icono svg { width: 16px; height: 16px; }
+.boton-icono--editar { color: var(--color-primario); }
+.boton-icono--editar:hover { background: var(--color-exito-fondo); }
+.boton-icono--eliminar { color: var(--color-peligro); }
+.boton-icono--eliminar:hover { background: #fde8e6; }
+
+.estado-vacio { padding: 2rem 1rem; text-align: center; color: var(--color-texto-suave); }
+
+/* ---------- 6. Diálogo y notificaciones ---------- */
+.dialogo {
+  width: min(440px, 100% - 2rem); padding: 1.5rem; border: 0; border-radius: var(--radio);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+.dialogo::backdrop { background: rgba(20, 24, 28, 0.45); }
+.dialogo__titulo { margin: 0 0 0.5rem; font-family: var(--fuente-titulos); color: var(--color-peligro); }
+.dialogo__texto { margin: 0 0 1.25rem; }
+.dialogo__acciones { display: flex; justify-content: flex-end; gap: 0.6rem; }
+
+.notificaciones {
+  position: fixed; right: 1rem; bottom: 1rem; display: flex; flex-direction: column; gap: 0.5rem; z-index: 10;
+}
+.notificacion {
+  min-width: 240px; max-width: 360px; padding: 0.75rem 1rem; border-radius: 10px;
+  color: #fff; font-weight: 600; box-shadow: var(--sombra);
+  animation: entrar 0.2s ease-out;
+  transition: opacity 0.4s, transform 0.4s;
+}
+.notificacion--exito { background: var(--color-primario); }
+.notificacion--info { background: #3b4450; }
+.notificacion--error { background: var(--color-peligro); }
+.notificacion--saliendo { opacity: 0; transform: translateY(8px); }
+@keyframes entrar { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.pie { padding: 1rem 0 2rem; text-align: center; color: var(--color-texto-suave); font-size: 0.85rem; }
+
+/* ---------- 7. Celulares y pantallas pequeñas ---------- */
+@media (max-width: 900px) {
+  .principal { grid-template-columns: 1fr; }
+  .formulario { position: static; }
+  .herramientas { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px) {
+  .estadisticas { width: 100%; }
+  .estadistica { flex: 1; min-width: 0; }
+  .fila-campos { grid-template-columns: 1fr; }
+  .herramientas { grid-template-columns: 1fr; }
+
+  /* La tabla se convierte en tarjetas: cada celda muestra su etiqueta */
+  .tabla thead { display: none; }
+  .tabla, .tabla tbody, .tabla tr, .tabla td { display: block; width: 100%; }
+  .tabla tr { padding: 0.6rem 0; border-bottom: 1px solid var(--color-borde); }
+  .tabla td { border: 0; padding: 0.25rem 0; }
+  .tabla td::before {
+    content: attr(data-etiqueta); display: block;
+    font-size: 0.72rem; text-transform: uppercase; color: var(--color-texto-suave);
+  }
+  .tabla td.tabla__acciones { text-align: left; }
+  .tabla td.tabla__acciones::before { display: none; }
+  .boton-icono:first-child { margin-left: 0; }
+}

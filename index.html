@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BiblioCRUD: aplicación web para registrar, consultar, editar y eliminar libros de una biblioteca.">
+  <title>BiblioCRUD · Gestor de libros</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <!-- ===================== ENCABEZADO ===================== -->
+  <header class="encabezado">
+    <div class="contenedor encabezado__contenido">
+      <div class="marca">
+        <span class="marca__icono" aria-hidden="true">📚</span>
+        <div>
+          <h1 class="marca__titulo">BiblioCRUD</h1>
+          <p class="marca__subtitulo">Gestor de libros de una biblioteca</p>
+        </div>
+      </div>
+
+      <!-- Resumen rápido: se actualiza cada vez que cambia la lista -->
+      <dl class="estadisticas" aria-label="Resumen de la biblioteca">
+        <div class="estadistica">
+          <dt>Total</dt>
+          <dd id="stat-total">0</dd>
+        </div>
+        <div class="estadistica">
+          <dt>Disponibles</dt>
+          <dd id="stat-disponibles">0</dd>
+        </div>
+        <div class="estadistica">
+          <dt>Prestados</dt>
+          <dd id="stat-prestados">0</dd>
+        </div>
+      </dl>
+    </div>
+  </header>
+
+  <main class="contenedor principal">
+    <!-- ===================== FORMULARIO (CREATE / UPDATE) ===================== -->
+    <section class="tarjeta formulario" aria-labelledby="titulo-formulario">
+      <h2 id="titulo-formulario" class="tarjeta__titulo">Agregar libro</h2>
+      <p id="aviso-edicion" class="aviso-edicion" hidden>
+        Estás editando un libro. Guarda los cambios o cancela.
+      </p>
+
+      <form id="form-libro" novalidate>
+        <!-- Campo oculto: guarda el id del libro cuando estamos editando -->
+        <input type="hidden" id="libro-id" name="id">
+
+        <div class="campo">
+          <label for="titulo">Título <span class="obligatorio" aria-hidden="true">*</span></label>
+          <input type="text" id="titulo" name="titulo" maxlength="120" autocomplete="off"
+                 placeholder="Ej.: Cien años de soledad" aria-describedby="error-titulo">
+          <p class="error" id="error-titulo"></p>
+        </div>
+
+        <div class="campo">
+          <label for="autor">Autor <span class="obligatorio" aria-hidden="true">*</span></label>
+          <input type="text" id="autor" name="autor" maxlength="80" autocomplete="off"
+                 placeholder="Ej.: Gabriel García Márquez" aria-describedby="error-autor">
+          <p class="error" id="error-autor"></p>
+        </div>
+
+        <div class="fila-campos">
+          <div class="campo">
+            <label for="anio">Año <span class="obligatorio" aria-hidden="true">*</span></label>
+            <input type="number" id="anio" name="anio" inputmode="numeric" placeholder="Ej.: 1967"
+                   aria-describedby="error-anio">
+            <p class="error" id="error-anio"></p>
+          </div>
+
+          <div class="campo">
+            <label for="genero">Género <span class="obligatorio" aria-hidden="true">*</span></label>
+            <!-- Las opciones se llenan desde JavaScript con la lista GENEROS -->
+            <select id="genero" name="genero" aria-describedby="error-genero"></select>
+            <p class="error" id="error-genero"></p>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="isbn">ISBN <span class="opcional">(opcional)</span></label>
+          <input type="text" id="isbn" name="isbn" maxlength="17" autocomplete="off"
+                 placeholder="10 o 13 dígitos, con o sin guiones" aria-describedby="error-isbn">
+          <p class="error" id="error-isbn"></p>
+        </div>
+
+        <fieldset class="campo campo--estado">
+          <legend>Estado</legend>
+          <label class="opcion-radio">
+            <input type="radio" name="estado" value="disponible" checked> Disponible
+          </label>
+          <label class="opcion-radio">
+            <input type="radio" name="estado" value="prestado"> Prestado
+          </label>
+        </fieldset>
+
+        <!-- Solo se muestra si el libro está prestado -->
+        <div class="campo" id="campo-prestado-a" hidden>
+          <label for="prestadoA">Prestado a <span class="obligatorio" aria-hidden="true">*</span></label>
+          <input type="text" id="prestadoA" name="prestadoA" maxlength="60" autocomplete="off"
+                 placeholder="Nombre de la persona" aria-describedby="error-prestadoA">
+          <p class="error" id="error-prestadoA"></p>
+        </div>
+
+        <div class="acciones-formulario">
+          <button type="submit" id="btn-guardar" class="boton boton--primario">Agregar libro</button>
+          <button type="button" id="btn-cancelar" class="boton boton--secundario" hidden>Cancelar edición</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ===================== LISTADO (READ) ===================== -->
+    <section class="tarjeta listado" aria-labelledby="titulo-listado">
+      <div class="listado__cabecera">
+        <h2 id="titulo-listado" class="tarjeta__titulo">Libros registrados</h2>
+        <p id="contador" class="contador" aria-live="polite"></p>
+      </div>
+
+      <!-- Barra de búsqueda, filtros y orden -->
+      <div class="herramientas">
+        <input type="search" id="buscar" class="herramientas__buscar"
+               placeholder="Buscar por título, autor o ISBN…" aria-label="Buscar libros">
+        <select id="filtro-estado" aria-label="Filtrar por estado">
+          <option value="todos">Todos los estados</option>
+          <option value="disponible">Disponibles</option>
+          <option value="prestado">Prestados</option>
+        </select>
+        <select id="filtro-genero" aria-label="Filtrar por género"></select>
+        <select id="orden" aria-label="Ordenar lista">
+          <option value="recientes">Más recientes</option>
+          <option value="titulo">Título (A-Z)</option>
+          <option value="autor">Autor (A-Z)</option>
+          <option value="anio-asc">Año (antiguo a nuevo)</option>
+          <option value="anio-desc">Año (nuevo a antiguo)</option>
+        </select>
+      </div>
+
+      <div class="tabla-envoltura">
+        <table class="tabla" id="tabla-libros">
+          <thead>
+            <tr>
+              <th scope="col">Título</th>
+              <th scope="col">Autor</th>
+              <th scope="col">Año</th>
+              <th scope="col">Género</th>
+              <th scope="col">Estado</th>
+              <th scope="col"><span class="solo-lectores">Acciones</span></th>
+            </tr>
+          </thead>
+          <!-- Las filas se generan desde JavaScript (interfaz.js) -->
+          <tbody id="cuerpo-tabla"></tbody>
+        </table>
+      </div>
+
+      <!-- Mensaje cuando no hay libros o el filtro no encuentra nada -->
+      <div id="estado-vacio" class="estado-vacio" hidden>
+        <p id="estado-vacio-texto"></p>
+        <button type="button" id="btn-ejemplos" class="boton boton--secundario">Cargar libros de ejemplo</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <p>Proyecto académico · Seminario Gestión de Software Ágil asistido por IA · FET · Luis Eduardo Medina Escobar</p>
+  </footer>
+
+  <!-- ===================== DIÁLOGO DE CONFIRMACIÓN (DELETE) ===================== -->
+  <dialog id="dialogo-eliminar" class="dialogo" aria-labelledby="dialogo-titulo">
+    <form method="dialog">
+      <h2 id="dialogo-titulo" class="dialogo__titulo">¿Eliminar este libro?</h2>
+      <p class="dialogo__texto">Vas a eliminar <strong id="dialogo-libro"></strong>. Esta acción no se puede deshacer.</p>
+      <div class="dialogo__acciones">
+        <button value="cancelar" class="boton boton--secundario">Cancelar</button>
+        <button value="confirmar" class="boton boton--peligro">Sí, eliminar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Mensajes cortos (toasts) que avisan el resultado de cada acción -->
+  <div id="notificaciones" class="notificaciones" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- El orden importa: primero los datos, luego la validación, la interfaz y al final la app -->
+  <script src="js/almacen.js"></script>
+  <script src="js/validacion.js"></script>
+  <script src="js/interfaz.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
