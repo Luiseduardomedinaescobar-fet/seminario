@@ -5,7 +5,7 @@ Aplicación web para **registrar, consultar, editar y eliminar libros** de una b
 Trabajo práctico del **Seminario Gestión de Software Ágil asistido por Inteligencia Artificial**, Fundación Escuela Tecnológica de Neiva “Jesús Oviedo Pérez” (FET). El desarrollo se guió con prompts a herramientas de IA (ver la sección [Prompts utilizados](#-prompts-utilizados)).
 
 🎥 **Video explicativo:** [pega aquí el enlace del video]
-🌐 **App en línea (GitHub Pages):** [pega aquí el enlace, ver “Cómo ejecutar”]
+🌐 **App en línea (GitHub Pages):https://luiseduardomedinaescobar-fet.github.io/seminario/
 
 ---
 
